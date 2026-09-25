@@ -1,8 +1,6 @@
 package com.example.demo;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +11,33 @@ import java.util.List;
 )
 
 public class BookController {
+
+    List<Book> books = new ArrayList<>();
     @GetMapping("/api/books")
     public List<Book> getBooks(){
-        List<Book> books = new ArrayList<>();
-        Book book1 = new Book(1 , "Programming in C" , "Japman Singh" , "Programming");
-        Book book2 = new Book(2 , "Physics" , "HC Verma" , "Science");
-        books.add(book1);
-        books.add(book2);
         return books ;
+    }
+
+    private Integer nextId = 0;
+    @PostMapping("/api/books")
+    public Book addBook(@RequestBody Book book){
+        book.setId(nextId++);
+        books.add(book);
+        return book ;
+    }
+
+    @DeleteMapping("/api/books/{id}")
+    public Book deleteBook(@PathVariable Integer id ){
+        Book bookToDelete = null ;
+        for(Book book : books){
+            if(book.getId().equals(id)){
+                bookToDelete = book ;
+                break ;
+            }
+        }
+        if(bookToDelete != null){
+            books.remove(bookToDelete);
+        }
+        return bookToDelete ;
     }
 }
